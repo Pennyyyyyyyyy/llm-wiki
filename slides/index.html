@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>情緒如何推動行為？｜心理學入門教學簡報</title>
+<style>
+  :root{
+    --paper:#FBF7F0; --ink:#1F2430; --muted:#5D6472; --line:#E6DFD3; --card:#FFFFFF;
+    --s1:#D9502B; --s2:#D99011; --s3:#1F8F8A; --s4:#4458C7; --s5:#8E4A8B; --warn:#B4441B;
+    --accent:var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#2A2E38;overflow:hidden}
+  body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Noto Sans CJK TC",system-ui,sans-serif;color:var(--ink)}
+  #viewport{position:fixed;left:0;right:0;top:6px;bottom:52px;display:flex;align-items:center;justify-content:center}
+  #stage{width:1280px;height:720px;position:relative;transform-origin:center center;flex:none}
+  .slide{position:absolute;inset:0;background:var(--paper);padding:64px 80px 70px;display:none;flex-direction:column;overflow:hidden;border-radius:6px}
+  .slide.active{display:flex;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .slide[data-st="1"]{--accent:var(--s1)} .slide[data-st="2"]{--accent:var(--s2)}
+  .slide[data-st="3"]{--accent:var(--s3)} .slide[data-st="4"]{--accent:var(--s4)}
+  .slide[data-st="5"]{--accent:var(--s5)}
+  .slide::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:var(--accent)}
+  .kicker{font-size:18px;font-weight:700;letter-spacing:.12em;color:var(--accent);margin-bottom:10px}
+  h1{font-size:60px;line-height:1.2;font-weight:800;letter-spacing:.01em}
+  h2{font-size:40px;line-height:1.25;font-weight:800;margin-bottom:26px}
+  h3{font-size:24px;font-weight:700;margin-bottom:8px}
+  p,li{font-size:24px;line-height:1.6}
+  .lead{font-size:28px;line-height:1.55;color:var(--ink)}
+  .muted{color:var(--muted)}
+  .en{font-size:.72em;color:var(--muted);font-weight:500;letter-spacing:.02em}
+  b,strong{color:var(--accent)}
+  ul.clean{list-style:none} ul.clean li{padding-left:30px;position:relative;margin-bottom:10px}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:.62em;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  .card p,.card li{font-size:20px}
+  .card .tag{display:inline-block;font-size:15px;font-weight:700;color:#fff;background:var(--accent);border-radius:99px;padding:3px 12px;margin-bottom:10px}
+  .example{margin-top:auto;background:color-mix(in srgb,var(--accent) 9%,white);border-left:6px solid var(--accent);border-radius:10px;padding:14px 20px;font-size:20px;line-height:1.55}
+  .example::before{content:"🎓 生活例子　";font-weight:700;color:var(--accent)}
+  .warn{background:#FFF1E8;border:1.5px solid #F0B494;border-radius:10px;padding:12px 18px;font-size:19px;line-height:1.5;color:#6B2A10}
+  .src{position:absolute;left:80px;right:80px;bottom:22px;display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+  .src a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted)}
+  .src a:hover{color:var(--ink)}
+  /* 封面 */
+  .cover{background:var(--ink);color:#fff;justify-content:center}
+  .cover::before{width:100%;height:10px;bottom:auto;background:linear-gradient(90deg,var(--s1),var(--s2),var(--s3),var(--s4),var(--s5))}
+  .cover h1{font-size:76px;color:#fff} .cover .sub{font-size:30px;color:#C9CED8;margin-top:18px}
+  .cover .meta{margin-top:56px;font-size:19px;color:#9AA1AE;line-height:1.7}
+  .cover .src,.cover .src a{color:#7C8391;border-color:#7C8391}
+  /* 地圖 */
+  .route{display:flex;align-items:stretch;gap:10px;margin-top:8px}
+  .stop{flex:1;border-radius:14px;padding:18px 16px;color:#fff;position:relative}
+  .stop .n{font-size:15px;font-weight:700;opacity:.85}
+  .stop .t{font-size:24px;font-weight:800;margin:4px 0 6px}
+  .stop .q{font-size:17px;line-height:1.45;opacity:.95}
+  .arrow{align-self:center;font-size:26px;color:var(--muted)}
+  /* 長條圖 */
+  .bars{display:flex;flex-direction:column;gap:16px;margin-top:6px}
+  .bar{display:grid;grid-template-columns:170px 1fr 90px;align-items:center;gap:16px;font-size:22px}
+  .bar .track{height:34px;background:#EFE9DE;border-radius:8px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--accent);border-radius:8px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+  .slide.active .bar .fill{width:var(--w)}
+  .bar .v{font-weight:800;color:var(--accent)}
+  /* 四分支階梯 */
+  .stairs{display:flex;align-items:flex-end;gap:16px;height:330px}
+  .step{flex:1;background:var(--card);border:1px solid var(--line);border-top:8px solid var(--accent);border-radius:12px;padding:16px 18px}
+  .step .no{font-size:34px;font-weight:800;color:var(--accent);line-height:1}
+  .step h3{font-size:24px;margin:6px 0} .step p{font-size:18px;line-height:1.5}
+  /* 測驗 */
+  .quiz{display:flex;flex-direction:column;gap:16px}
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px}
+  .qcard .qq{font-size:21px;font-weight:700;margin-bottom:10px}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .opts button{font:inherit;font-size:18px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:#FBFAF7;cursor:pointer;text-align:left;line-height:1.4;color:var(--ink)}
+  .opts button:hover{border-color:var(--ink)}
+  .opts button.right{background:#E3F4EC;border-color:#2E9461}
+  .opts button.wrong{background:#FBE7E3;border-color:#C9472B}
+  .fb{font-size:17px;color:var(--muted);margin-top:8px;min-height:24px}
+  /* 介面 */
+  #bar{position:fixed;left:0;top:0;height:4px;background:linear-gradient(90deg,var(--s1),var(--s2),var(--s3),var(--s4),var(--s5));transition:width .3s;z-index:5}
+  #hud{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;align-items:center;z-index:5}
+  #hud button{width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:18px;cursor:pointer}
+  #hud button:hover{background:rgba(255,255,255,.28)}
+  #count{color:#C9CED8;font-size:14px;min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
+  #help{position:fixed;left:18px;bottom:18px;color:#8E95A3;font-size:13px;z-index:5}
+  @media print{
+    html,body{overflow:visible;background:#fff} #viewport{position:static;display:block}
+    #stage{transform:none!important;width:1280px;height:auto}
+    .slide{display:flex!important;position:relative;height:720px;page-break-after:always;animation:none}
+    #hud,#bar,#help{display:none}
+    .bar .fill{width:var(--w)}
+  }
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="viewport"><div id="stage">
+
+<!-- 1 封面 -->
+<section class="slide cover" data-wiki="wiki/overview.md">
+  <div class="kicker" style="color:#C9CED8">心理學入門｜教學簡報</div>
+  <h1>情緒如何推動行為？</h1>
+  <div class="sub">從「感覺」到「行動」的五站旅程</div>
+  <div class="meta" data-nocheck>適合對象：沒修過心理學的大學生　｜　約 25 分鐘<br>知識來源：本專案的「情緒與行為 LLM Wiki」（以 5 篇 NOBA 心理學模組建成）<br>操作：← → 鍵或點右下角按鈕翻頁</div>
+</section>
+
+<!-- 2 引子＋地圖 -->
+<section class="slide" data-wiki="wiki/synthesis/emotion-to-behavior.md">
+  <div class="kicker">暖身</div>
+  <h2>先想想：期末考前一週，你會…</h2>
+  <p class="lead" style="margin-bottom:26px">看到考程表心跳加速、讀不下去時很煩躁、讀完一章想犒賞自己……<br>這些<b>感覺</b>，是怎麼變成<b>行動</b>的？今天走五站：</p>
+  <div class="route">
+    <div class="stop" style="background:var(--s1)"><div class="n">第 1 站</div><div class="t">情緒的功能</div><div class="q">情緒為什麼存在？</div></div><div class="arrow">→</div>
+    <div class="stop" style="background:var(--s2)"><div class="n">第 2 站</div><div class="t">情緒與幸福感</div><div class="q">越快樂越好嗎？</div></div><div class="arrow">→</div>
+    <div class="stop" style="background:var(--s3)"><div class="n">第 3 站</div><div class="t">情緒智力</div><div class="q">情緒能管理嗎？</div></div><div class="arrow">→</div>
+    <div class="stop" style="background:var(--s4)"><div class="n">第 4 站</div><div class="t">動機與目標</div><div class="q">情緒怎麼推我們前進？</div></div><div class="arrow">→</div>
+    <div class="stop" style="background:var(--s5)"><div class="n">第 5 站</div><div class="t">制約與學習</div><div class="q">行為怎麼被學會？</div></div>
+  </div>
+</section>
+
+<!-- 3 情緒是什麼 -->
+<section class="slide" data-st="1" data-wiki="wiki/concepts/emotion-functions.md wiki/sources/s2-emotion-experience-and-well-being.md">
+  <div class="kicker">第 1 站｜情緒的功能</div>
+  <h2>情緒是什麼？</h2>
+  <p class="lead">情緒是對「<b>對自己有意義的事</b>」產生的反應，包含三個部分：</p>
+  <div class="grid3" style="margin-top:24px">
+    <div class="card"><span class="tag">經驗</span><h3>主觀感受</h3><p>「我好緊張」</p></div>
+    <div class="card"><span class="tag">生理</span><h3>身體反應</h3><p>心跳加快、手心冒汗</p></div>
+    <div class="card"><span class="tag">行為</span><h3>行動傾向</h3><p>想逃、想靠近、想說話</p></div>
+  </div>
+  <p style="margin-top:26px">心理學家把情緒看成一套<b>整合的反應系統</b>，不是理性的干擾。</p>
+  <div class="example">期末考前看到考程表：心裡覺得「完了」（經驗）、心跳加速（生理）、想趕快打開課本或乾脆逃去滑手機（行為）。</div>
+</section>
+
+<!-- 4 三層功能 -->
+<section class="slide" data-st="1" data-wiki="wiki/concepts/emotion-functions.md">
+  <div class="kicker">第 1 站｜情緒的功能</div>
+  <h2>情緒在三個層次幫助我們</h2>
+  <div class="grid3">
+    <div class="card"><span class="tag">個人內 <span style="opacity:.8">intrapersonal</span></span><h3>幫自己</h3><p>快速行動、讓身體準備好、影響記憶與思考、激勵未來的行為</p></div>
+    <div class="card"><span class="tag">人際 <span style="opacity:.8">interpersonal</span></span><h3>跟別人溝通</h3><p>表情是訊號：生氣的臉讓人想躲開，痛苦的臉讓人想幫忙</p></div>
+    <div class="card"><span class="tag">社會文化 <span style="opacity:.8">social-cultural</span></span><h3>維持秩序</h3><p>文化規範什麼場合該有什麼情緒，讓群體能合作</p></div>
+  </div>
+  <div class="example">喝到壞掉的牛奶，馬上覺得噁心、吐掉（個人內），以後喝之前都會先看保存期限，這就是情緒在激勵未來的行為。</div>
+</section>
+
+<!-- 5 身體緊急模式 -->
+<section class="slide" data-st="1" data-wiki="wiki/concepts/emotion-functions.md">
+  <div class="kicker">第 1 站｜個人內功能</div>
+  <h2>恐懼：身體的「緊急模式」</h2>
+  <div class="grid2">
+    <div>
+      <ul class="clean">
+        <li>消化變慢（所以會口乾）</li>
+        <li>血液流向下肢，準備逃跑</li>
+        <li>視野變寬，看到更多危險</li>
+        <li>呼吸加快</li>
+      </ul>
+      <p class="muted" style="font-size:20px;margin-top:10px">情緒會<b>同時打開某些系統、關掉其他系統</b>，避免身體各做各的。</p>
+    </div>
+    <div class="card">
+      <h3>情緒也會影響思考</h3>
+      <p>✅ 記憶會被當下的情緒「上色」，情緒像把事實黏在一起的<b>膠水</b></p>
+      <p style="margin-top:10px">⚠️ 但情緒<b>太強烈</b>時，很難清楚思考</p>
+      <p style="margin-top:10px">💡 而且情緒<b>不一定</b>會變成行動，還要看情境和經驗</p>
+    </div>
+  </div>
+  <div class="example">上台報告前口乾舌燥、心跳飛快，不是你「太弱」，而是身體正在用演化留下來的方式準備應戰。</div>
+</section>
+
+<!-- 6 社會參照 -->
+<section class="slide" data-st="1" data-wiki="wiki/concepts/social-referencing.md">
+  <div class="kicker">第 1 站｜人際功能</div>
+  <h2>社會參照：看別人的臉決定怎麼做</h2>
+  <p style="margin-bottom:18px"><b>視覺懸崖實驗</b>（Sorce et al., 1985）：嬰兒爬到「看起來像懸崖」的透明平台邊，媽媽在對面擺出不同表情。<br>有多少嬰兒會爬過去？</p>
+  <div class="bars">
+    <div class="bar"><span>😨 恐懼</span><div class="track"><div class="fill" style="--w:0.6%"></div></div><span class="v">沒有人</span></div>
+    <div class="bar"><span>😠 生氣</span><div class="track"><div class="fill" style="--w:6%"></div></div><span class="v">約 6%</span></div>
+    <div class="bar"><span>😢 悲傷</span><div class="track"><div class="fill" style="--w:33%"></div></div><span class="v">約 33%</span></div>
+    <div class="bar"><span>😊 喜悅／感興趣</span><div class="track"><div class="fill" style="--w:75%"></div></div><span class="v">約 75%</span></div>
+  </div>
+  <div class="example">第一次去實習單位，不確定能不能在座位上吃東西，你會先偷看主管和同事的表情，這就是社會參照。</div>
+</section>
+
+<!-- 7 表達規則 -->
+<section class="slide" data-st="1" data-wiki="wiki/concepts/display-rules.md">
+  <div class="kicker">第 1 站｜社會文化功能</div>
+  <h2>文化表達規則 <span class="en">cultural display rules</span></h2>
+  <p class="lead">從小學會的規則：在什麼場合，情緒要<b>照實表達、誇大、淡化、掩飾</b>，還是<b>面無表情</b>。</p>
+  <div class="grid3" style="margin-top:24px">
+    <div class="card"><h3>「男生不哭」</h3><p>淡化或掩飾悲傷</p></div>
+    <div class="card"><h3>對老闆的冷笑話陪笑</h3><p>誇大愉快</p></div>
+    <div class="card"><h3>在長輩面前不能不耐煩</h3><p>掩飾煩躁</p></div>
+  </div>
+  <p style="margin-top:24px">這些規則幫社會<b>維持秩序</b>。但第 2 站會看到：<b>長期壓抑</b>是有代價的。</p>
+  <div class="example">想想看：你家或你的文化裡，有哪條「不能在別人面前表現出來」的情緒規則？它是在保護誰？</div>
+</section>
+
+<!-- 8 不是越快樂越好 -->
+<section class="slide" data-st="2" data-wiki="wiki/concepts/emotion-and-well-being.md">
+  <div class="kicker">第 2 站｜情緒與幸福感</div>
+  <h2>不是越快樂越好：三個面向</h2>
+  <div class="grid3">
+    <div class="card">
+      <span class="tag">① 強度</span><h3>過猶不及</h3>
+      <svg viewBox="0 0 200 92" width="100%" height="92" aria-label="倒U型曲線">
+        <line x1="10" y1="82" x2="192" y2="82" stroke="#C9C1B3" stroke-width="2"/>
+        <line x1="10" y1="82" x2="10" y2="6" stroke="#C9C1B3" stroke-width="2"/>
+        <path d="M14 78 C 60 2, 140 2, 188 70" fill="none" stroke="#D99011" stroke-width="5" stroke-linecap="round"/>
+        <text x="100" y="98" font-size="11" text-anchor="middle" fill="#5D6472">正向情緒強度 →</text>
+      </svg>
+      <p>正向情緒呈<b>倒 U 型</b>，太多反而有害；負向情緒<b>太少</b>也有問題</p>
+    </div>
+    <div class="card"><span class="tag">② 波動</span><h3>穩定但不僵化</h3><p>平均心情一樣，但起伏越大，通常幸福感越差；能依情境<b>調整</b>的彈性則是好的</p></div>
+    <div class="card"><span class="tag">③ 情境</span><h3>對的場合、對的情緒</h3><p>快樂適合生日派對，不適合喪禮；<b>不顧情境</b>一味追求快樂，反而更孤單</p></div>
+  </div>
+  <div class="example">期中考前完全不焦慮，聽起來很好，但可能就不會準備；適度焦慮反而推你去讀書。</div>
+</section>
+
+<!-- 9 一致性 + 混合 -->
+<section class="slide" data-st="2" data-wiki="wiki/concepts/emotion-coherence.md wiki/concepts/mixed-emotions.md">
+  <div class="kicker">第 2 站｜情境的兩個細節</div>
+  <h2>表裡一致，好壞並存</h2>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag">情緒一致性 emotion coherence</span>
+      <h3>感受、表情、身體是否一致</h3>
+      <p>看喜劇片時表裡一致的人，<b>六個月後</b>憂鬱症狀較低、幸福感較高。</p>
+      <p style="margin-top:8px">可能原因：表裡不一，別人讀不懂你，會覺得你不真誠，關係就變遠了。</p>
+    </div>
+    <div class="card">
+      <span class="tag">混合情緒 mixed emotions</span>
+      <h3>正負情緒可以同時存在</h3>
+      <p>懷舊、畢業的不捨。喪偶者在悲傷中也能表達正向情緒的，恢復得比較快。</p>
+      <p style="margin-top:8px">能「<b>好的壞的一起接受</b>」，有助於因應困難。</p>
+    </div>
+  </div>
+  <div class="example">心裡很難過卻擠出笑容說「我沒事」，朋友反而不知道怎麼靠近你。偶爾依場合調整沒關係，長期壓抑才是問題。</div>
+</section>
+
+<!-- 10 四分支 -->
+<section class="slide" data-st="3" data-wiki="wiki/concepts/four-branch-model.md wiki/concepts/emotional-intelligence.md">
+  <div class="kicker">第 3 站｜情緒智力（EI）</div>
+  <h2>情緒智力的四個能力 <span class="en">Mayer &amp; Salovey 四分支模型</span></h2>
+  <div class="stairs">
+    <div class="step" style="height:52%"><div class="no">1</div><h3>知覺</h3><p>從表情、語氣看出情緒</p></div>
+    <div class="step" style="height:68%"><div class="no">2</div><h3>運用</h3><p>讓情緒配合任務：挫折感適合比賽，不適合解代數</p></div>
+    <div class="step" style="height:84%"><div class="no">3</div><h3>理解</h3><p>知道情緒的成因和組合：輕蔑＝生氣＋厭惡</p></div>
+    <div class="step" style="height:100%"><div class="no">4</div><h3>管理</h3><p>對情緒保持開放，需要時調節，讓情緒<b>符合情境</b>（接第 2 站）</p></div>
+  </div>
+  <div class="example" style="margin-top:20px">排很久的演唱會票被插隊而賣完：察覺怒氣 → 理解自己是覺得不公平 → 深呼吸，冷靜後再想下一步。</div>
+</section>
+
+<!-- 11 RULER -->
+<section class="slide" data-st="3" data-wiki="wiki/concepts/sel-and-ruler.md wiki/concepts/emotional-intelligence.md">
+  <div class="kicker">第 3 站｜EI 可以學</div>
+  <h2>學校怎麼教情緒：RULER</h2>
+  <div class="grid4" style="grid-template-columns:repeat(5,1fr)">
+    <div class="card"><h3 style="font-size:40px;color:var(--accent)">R</h3><p>Recognize<br>辨識</p></div>
+    <div class="card"><h3 style="font-size:40px;color:var(--accent)">U</h3><p>Understand<br>理解</p></div>
+    <div class="card"><h3 style="font-size:40px;color:var(--accent)">L</h3><p>Label<br>命名</p></div>
+    <div class="card"><h3 style="font-size:40px;color:var(--accent)">E</h3><p>Express<br>表達</p></div>
+    <div class="card"><h3 style="font-size:40px;color:var(--accent)">R</h3><p>Regulate<br>調節</p></div>
+  </div>
+  <ul class="clean" style="margin-top:26px">
+    <li>隨機試驗：一年後，實施 RULER 的學校師生關係更<b>溫暖</b>，<b>霸凌更少</b></li>
+    <li>社會情緒學習（SEL）的後設分析：能改善學生的表現</li>
+    <li>把 EI 看成<b>技能</b>（而不是天生的人格），代表每個人都能進步</li>
+  </ul>
+</section>
+
+<!-- 12 目標與動機 -->
+<section class="slide" data-st="4" data-wiki="wiki/concepts/goals-and-motivation.md">
+  <div class="kicker">第 4 站｜動機與目標</div>
+  <h2>目標、動機，和「承諾公式」</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>內在 vs. 外在動機</h3>
+      <p><b>內在</b>：享受過程本身<br><span class="muted">因為好玩而學日文</span></p>
+      <p style="margin-top:10px"><b>外在</b>：為了完成後的報酬<br><span class="muted">為了履歷加分而學日文</span></p>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center">
+      <h3>你會不會投入一個目標？</h3>
+      <p style="font-size:34px;font-weight:800;margin:14px 0">承諾 ＝ <span style="color:var(--accent)">價值</span> × <span style="color:var(--accent)">期望</span></p>
+      <p class="muted" style="font-size:19px">有多重要 × 覺得自己做得到多少</p>
+    </div>
+  </div>
+  <p style="margin-top:22px">目標還會改變你<b>看到</b>的世界：口渴的人，對杯子的評價比對鉛筆高。</p>
+  <div class="example">覺得「日文很重要」但「我一定學不會」：價值高 × 期望低 → 承諾低，很容易放棄。</div>
+</section>
+
+<!-- 13 控制論 -->
+<section class="slide" data-st="4" data-wiki="wiki/concepts/self-regulation.md">
+  <div class="kicker">第 4 站｜⭐ 今天最重要的一頁</div>
+  <h2>情緒是追求目標的「回饋訊號」</h2>
+  <div class="grid2" style="align-items:center">
+    <svg viewBox="0 0 520 300" width="100%" aria-label="控制論模型圖">
+      <defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4458C7"/></marker></defs>
+      <rect x="150" y="10" width="220" height="58" rx="12" fill="#fff" stroke="#4458C7" stroke-width="2.5"/>
+      <text x="260" y="46" font-size="20" text-anchor="middle" font-weight="700" fill="#1F2430">比較：現況 vs. 目標</text>
+      <rect x="10" y="190" width="220" height="90" rx="12" fill="#EEF0FB" stroke="#4458C7" stroke-width="2"/>
+      <text x="120" y="224" font-size="18" text-anchor="middle" font-weight="700" fill="#1F2430">比預期「慢」</text>
+      <text x="120" y="252" font-size="17" text-anchor="middle" fill="#1F2430">😟 負向感受 → 更努力</text>
+      <rect x="290" y="190" width="220" height="90" rx="12" fill="#EEF0FB" stroke="#4458C7" stroke-width="2"/>
+      <text x="400" y="224" font-size="18" text-anchor="middle" font-weight="700" fill="#1F2430">比預期「快」</text>
+      <text x="400" y="252" font-size="17" text-anchor="middle" fill="#1F2430">😊 正向感受 → 可能鬆懈</text>
+      <path d="M215 70 L140 182" stroke="#4458C7" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+      <path d="M305 70 L380 182" stroke="#4458C7" stroke-width="2.5" fill="none" marker-end="url(#ah)"/>
+      <path d="M120 190 C 70 130, 110 60, 165 42" stroke="#9AA1AE" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#ah)"/>
+      <text x="40" y="120" font-size="15" fill="#5D6472">行動後</text><text x="40" y="138" font-size="15" fill="#5D6472">再比較</text>
+    </svg>
+    <div>
+      <p>心理學的<b>控制論模型</b>：大腦會不斷比較「現在在哪」和「想去哪」。</p>
+      <p style="margin-top:14px">那種<b>落後的焦慮感</b>，本身就是推你前進的燃料；而<b>超前的滿足感</b>，會讓你想休息。</p>
+      <p style="margin-top:14px" class="muted">→ 這就是第 1 站說的「情緒激勵未來行為」的具體機制。</p>
+    </div>
+  </div>
+  <div class="example">專題進度只有一半，焦慮讓你週末多做兩天；超前的那週，你就開始追劇。</div>
+</section>
+
+<!-- 14 自我控制 -->
+<section class="slide" data-st="4" data-wiki="wiki/concepts/self-control.md wiki/concepts/regulatory-focus.md">
+  <div class="kicker">第 4 站｜當目標遇到誘惑</div>
+  <h2>自我控制：別只靠意志力</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>實用策略</h3>
+      <ul class="clean" style="margin-top:6px">
+        <li><b>看成模式</b>：問題不是一杯手搖飲，而是「每天一杯」</li>
+        <li><b>事先承諾</b>：不帶信用卡出門</li>
+        <li><b>設定獎懲</b>，靠近目標、<b>遠離誘惑</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>兩種追目標的風格</h3>
+      <p><b>促進焦點</b>：目標是「理想」，追求收穫<br><span class="muted">存錢是為了去旅行</span></p>
+      <p style="margin-top:10px"><b>預防焦點</b>：目標是「應該」，避免損失<br><span class="muted">存錢是為了避免以後陷入困境</span></p>
+    </div>
+  </div>
+  <div class="warn" style="margin-top:22px">⚠️ 課本常提到的「棉花糖實驗」和「自我耗竭（意志力會用完）」，後來的大型重複驗證結果都比原研究弱很多，第 19 頁會說明。</div>
+</section>
+
+<!-- 15 古典制約 -->
+<section class="slide" data-st="5" data-wiki="wiki/concepts/classical-conditioning.md">
+  <div class="kicker">第 5 站｜制約與學習</div>
+  <h2>古典制約：連情緒都是學來的</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Pavlov 的狗</h3>
+      <p>🍖 食物（US）→ 流口水（UR）<span class="muted">天生的</span></p>
+      <p>🔔 鈴聲＋🍖 食物，一起出現很多次</p>
+      <p>🔔 只有鈴聲（CS）→ 流口水（CR）<span class="muted">學來的</span></p>
+    </div>
+    <div class="card">
+      <h3>情緒反應也會這樣被學會</h3>
+      <ul class="clean">
+        <li><b>恐懼制約</b>：跟恐懼症有關</li>
+        <li><b>味覺嫌惡</b>：喝龍舌蘭喝到吐，之後一聞到就想吐</li>
+        <li>要有「<b>驚訝</b>」（預測誤差）才會學到</li>
+      </ul>
+    </div>
+  </div>
+  <div class="example">看到某家速食店的招牌就肚子餓；聽到早上的鬧鐘聲就心情變差。</div>
+</section>
+
+<!-- 16 操作制約 消弱 習慣 -->
+<section class="slide" data-st="5" data-wiki="wiki/concepts/operant-conditioning.md wiki/concepts/extinction.md wiki/concepts/habit-vs-goal-directed.md">
+  <div class="kicker">第 5 站｜行為與後果</div>
+  <h2>操作制約、消弱、習慣</h2>
+  <div class="grid3">
+    <div class="card"><span class="tag">操作制約</span><h3>效果律</h3><p>帶來好後果的行為會<b>增加</b>（增強），帶來壞後果的會<b>減少</b>（懲罰）</p></div>
+    <div class="card"><span class="tag">消弱</span><h3>≠ 遺忘</h3><p>不再有後果，反應就會減弱；但過一段時間、<b>換了情境</b>，反應可能又回來</p></div>
+    <div class="card"><span class="tag">習慣</span><h3>不看結果了</h3><p>練習夠多次，行為就變成<b>自動化</b>，不再考慮結果好不好</p></div>
+  </div>
+  <div class="example">在小組練習報告已經不緊張了，到大教室又緊張起來：消弱有情境性，所以要到真正的場地練習。<br>一進房間就滑手機是習慣，改變的方法是改變情境，例如把手機放客廳。</div>
+</section>
+
+<!-- 17 觀察學習 -->
+<section class="slide" data-st="5" data-wiki="wiki/concepts/observational-learning.md">
+  <div class="kicker">第 5 站｜看別人就能學</div>
+  <h2>觀察學習 <span class="en">Bandura 社會學習理論</span></h2>
+  <div class="grid4">
+    <div class="card"><span class="tag">1</span><h3>注意</h3><p>注意到示範者</p></div>
+    <div class="card"><span class="tag">2</span><h3>保留</h3><p>記住那個行為</p></div>
+    <div class="card"><span class="tag">3</span><h3>啟動</h3><p>有能力做出來<br><span class="muted" style="font-size:16px">（也常譯作「再現」）</span></p></div>
+    <div class="card"><span class="tag">4</span><h3>動機</h3><p>有想做的理由</p></div>
+  </div>
+  <p style="margin-top:24px"><b>波波玩偶實驗</b>：看過大人攻擊玩偶的孩子，之後也比較會攻擊玩偶；但如果看到大人<b>被處罰</b>，孩子攻擊就變少（替代增強）。</p>
+  <div class="example">剛進社團時，你看學長姐怎麼跟老師說話、誰被稱讚，就學會了社團的「規矩」。</div>
+</section>
+
+<!-- 18 整合 -->
+<section class="slide" data-wiki="wiki/synthesis/emotion-to-behavior.md">
+  <div class="kicker">整合</div>
+  <h2>把五站串起來：情緒 ⇄ 行為的循環</h2>
+  <div class="grid2" style="grid-template-columns:1.05fr 1fr;align-items:center">
+    <svg viewBox="0 0 460 380" width="100%" aria-label="情緒與行為循環圖">
+      <defs><marker id="ah2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5D6472"/></marker></defs>
+      <g font-size="17" font-weight="700" text-anchor="middle" fill="#fff">
+        <rect x="160" y="8" width="140" height="56" rx="28" fill="#D9502B"/><text x="230" y="42">① 情緒產生</text>
+        <rect x="318" y="120" width="136" height="56" rx="28" fill="#D99011"/><text x="386" y="154">② 健康嗎？</text>
+        <rect x="270" y="280" width="150" height="56" rx="28" fill="#1F8F8A"/><text x="345" y="314">③ 管理情緒</text>
+        <rect x="40" y="280" width="150" height="56" rx="28" fill="#4458C7"/><text x="115" y="314">④ 變成動機</text>
+        <rect x="6" y="120" width="140" height="56" rx="28" fill="#8E4A8B"/><text x="76" y="154">⑤ 學成行為</text>
+      </g>
+      <g stroke="#5D6472" stroke-width="2.2" fill="none" marker-end="url(#ah2)">
+        <path d="M300 48 Q 370 60 384 112"/><path d="M390 178 Q 395 240 372 274"/><path d="M268 310 L 198 310"/>
+        <path d="M95 278 Q 70 230 74 184"/><path d="M90 118 Q 110 50 154 38"/>
+      </g>
+      <text x="230" y="200" font-size="15" text-anchor="middle" fill="#5D6472">行為的後果</text>
+      <text x="230" y="220" font-size="15" text-anchor="middle" fill="#5D6472">又引發新的情緒</text>
+    </svg>
+    <div class="card">
+      <h3>貫穿例子：準備期末考</h3>
+      <p style="font-size:18px;line-height:1.65">① 看到考程表就焦慮，身體進入警戒<br>② 適度焦慮有幫助，太焦慮讀不下<br>③ 替它命名「我是焦慮」，深呼吸後做計畫<br>④ 進度落後的焦慮，推你更努力<br>⑤ 讀完一章就犒賞自己，久了「晚餐後讀書」變成習慣</p>
+    </div>
+  </div>
+  <p class="muted" style="font-size:16px;margin-top:8px">註：「循環」是 Wiki 把三篇來源放在一起後的整合推論，不是單一來源的原話。</p>
+</section>
+
+<!-- 19 爭議 -->
+<section class="slide" data-wiki="wiki/synthesis/caveats-and-debates.md">
+  <div class="kicker" style="color:var(--warn)">批判思考</div>
+  <h2>科學也會修正自己</h2>
+  <div class="grid2">
+    <div class="card">
+      <span class="tag" style="background:var(--warn)">自我耗竭</span>
+      <h3>「意志力會用完」？</h3>
+      <p>原研究：忍住不吃巧克力的人，之後解謎比較早放棄。</p>
+      <p style="margin-top:8px">2016 年 <b style="color:var(--warn)">23 個實驗室</b>一起重做：效果<b style="color:var(--warn)">接近零</b>。</p>
+    </div>
+    <div class="card">
+      <span class="tag" style="background:var(--warn)">棉花糖實驗</span>
+      <h3>「能等的小孩比較成功」？</h3>
+      <p>原研究：約十年後追蹤，當年等得比較久的孩子表現比較好。</p>
+      <p style="margin-top:8px">2018 年用更大、更多元的樣本重做：關聯<b style="color:var(--warn)">小很多</b>。</p>
+    </div>
+  </div>
+  <p style="margin-top:24px">👉 讀心理學時，要問：<b>樣本夠大嗎？別人重做得出來嗎？</b>自我控制的<b>策略</b>還是有用，只是別把一個實驗當成定律。</p>
+</section>
+
+<!-- 20 測驗 -->
+<section class="slide" data-wiki="wiki/concepts/social-referencing.md wiki/concepts/emotion-and-well-being.md wiki/concepts/self-regulation.md">
+  <div class="kicker">小測驗</div>
+  <h2>檢查一下你的理解</h2>
+  <div class="quiz">
+    <div class="qcard"><div class="qq">Q1. 嬰兒看媽媽的表情決定要不要爬過「懸崖」，這叫做？</div>
+      <div class="opts" data-ans="1" data-why="社會參照：從別人的情緒得到資訊，再決定怎麼做。">
+        <button>文化表達規則</button><button>社會參照</button><button>古典制約</button></div><div class="fb"></div></div>
+    <div class="qcard"><div class="qq">Q2. 關於正向情緒和幸福感，下面哪一句最正確？</div>
+      <div class="opts" data-ans="2" data-why="正向情緒呈倒 U 型：適量最好，太多反而跟冒險行為有關。">
+        <button>越多越好，沒有上限</button><button>跟幸福感完全無關</button><button>適量最好，太多可能有害</button></div><div class="fb"></div></div>
+    <div class="qcard"><div class="qq">Q3. 依控制論模型，進度「比預期慢」時通常會？</div>
+      <div class="opts" data-ans="0" data-why="負向感受是回饋訊號，會增加對這個目標的努力。">
+        <button>產生負向感受，因而更努力</button><button>產生正向感受，因而鬆懈</button><button>情緒不受影響，照原計畫</button></div><div class="fb"></div></div>
+  </div>
+</section>
+
+<!-- 21 回顧 -->
+<section class="slide" data-wiki="wiki/index.md wiki/synthesis/caveats-and-debates.md">
+  <div class="kicker">重點回顧</div>
+  <h2>帶走這五句話</h2>
+  <ul class="clean">
+    <li><b style="color:var(--s1)">情緒有功能</b>：幫自己行動、跟別人溝通、維持社會秩序</li>
+    <li><b style="color:var(--s2)">不是越快樂越好</b>：強度、波動、情境都很重要</li>
+    <li><b style="color:var(--s3)">情緒可以管理</b>：知覺 → 運用 → 理解 → 管理，而且可以學</li>
+    <li><b style="color:var(--s4)">情緒是回饋訊號</b>：落後的焦慮推你前進</li>
+    <li><b style="color:var(--s5)">行為是學來的</b>：制約、習慣、觀察，也就能被重新學習</li>
+  </ul>
+  <p class="muted" style="font-size:15px;margin-top:auto;line-height:1.6">來源（皆為 NOBA Textbook Series, CC BY-NC-SA 4.0）：Hwang &amp; Matsumoto〈Functions of Emotions〉；Ford &amp; Mauss〈Emotion Experience and Well-Being〉；Brackett, Delaney &amp; Salovey〈Emotional Intelligence〉；Fishbach &amp; Touré-Tillery〈Motives and Goals〉；Bouton〈Conditioning and Learning〉。補充：Hagger et al. (2016)；Watts, Duncan &amp; Quan (2018)。</p>
+</section>
+
+</div></div>
+
+<div id="help">← → 翻頁　｜　F 全螢幕　｜　每頁左下角可連回 Wiki 來源頁</div>
+<div id="hud"><button id="prev" aria-label="上一頁">‹</button><span id="count"></span><button id="next" aria-label="下一頁">›</button></div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const stage=document.getElementById('stage');
+  // 每頁加上 Wiki 來源連結（連到 wiki-site 的 HTML 版）
+  slides.forEach((s,i)=>{
+    const refs=(s.dataset.wiki||'').split(/\s+/).filter(Boolean);
+    const f=document.createElement('div'); f.className='src';
+    const links=refs.map(r=>{const h='../wiki-site/'+r.replace(/^wiki\//,'').replace(/\.md$/,'.html');
+      const name=r.split('/').pop().replace('.md','');return `<a href="${h}" target="_blank">${name}</a>`}).join('、');
+    f.innerHTML=`<span>📚 Wiki 來源頁：${links}</span><span>${i+1} / ${slides.length}</span>`;
+    s.appendChild(f);
+  });
+  let cur=Math.max(0,Math.min(slides.length-1,(parseInt(location.hash.slice(1))||1)-1));
+  function show(n){
+    cur=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,i)=>s.classList.toggle('active',i===cur));
+    document.getElementById('count').textContent=`${cur+1} / ${slides.length}`;
+    document.getElementById('bar').style.width=((cur+1)/slides.length*100)+'%';
+    history.replaceState(null,'','#'+(cur+1));
+  }
+  function fit(){const v=document.getElementById('viewport');const s=Math.min(v.clientWidth/1280,v.clientHeight/720)*0.97;stage.style.transform=`scale(${s})`}
+  addEventListener('resize',fit); fit(); show(cur);
+  document.getElementById('next').onclick=()=>show(cur+1);
+  document.getElementById('prev').onclick=()=>show(cur-1);
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(cur+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(cur-1)}
+    if(e.key==='Home')show(0); if(e.key==='End')show(slides.length-1);
+    if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+  });
+  let x0=null; addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)show(cur+(d<0?1:-1));x0=null});
+  // 小測驗
+  document.querySelectorAll('.opts').forEach(g=>{
+    const ans=+g.dataset.ans, fb=g.nextElementSibling;
+    [...g.children].forEach((b,i)=>b.onclick=()=>{
+      [...g.children].forEach(x=>x.classList.remove('right','wrong'));
+      b.classList.add(i===ans?'right':'wrong'); if(i!==ans)g.children[ans].classList.add('right');
+      fb.textContent=(i===ans?'✅ 答對了！':'❌ 再想想：')+g.dataset.why;
+    });
+  });
+})();
+</script>
+</body>
+</html>

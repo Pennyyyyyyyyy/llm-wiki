@@ -1,0 +1,89 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>log.md：操作紀錄（只能往下追加）｜情緒與行為 LLM Wiki</title><style>
+:root{--paper:#FBF7F0;--ink:#1F2430;--muted:#5D6472;--line:#E6DFD3}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.75}
+header{background:var(--ink);color:#fff;padding:14px 28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+header a{color:#E3E6EC;text-decoration:none;font-size:15px}header a:hover{color:#fff}
+header .brand{font-weight:800;font-size:17px;color:#fff;margin-right:auto}
+main{max-width:860px;margin:0 auto;padding:36px 28px 80px}
+h1{font-size:32px;line-height:1.3}h2{font-size:23px;margin-top:2em;border-bottom:2px solid var(--line);padding-bottom:4px}h3{font-size:19px}
+a{color:#3546B0}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:15px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:#F3EEE5}
+code{background:#EFE9DE;padding:1px 5px;border-radius:4px;font-size:.92em}pre{background:#1F2430;color:#E8EAF0;padding:16px;border-radius:8px;overflow:auto;line-height:1.5}pre code{background:none;color:inherit}
+blockquote{margin:1em 0;padding:8px 16px;border-left:4px solid #D99011;background:#FFF7E6}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.chip{font-size:13px;padding:3px 10px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--muted)}
+.chip.type{color:#fff;border:none}
+footer{max-width:860px;margin:0 auto;padding:0 28px 40px;color:var(--muted);font-size:13px}
+</style></head><body>
+<header><span class="brand">🧠 情緒與行為 LLM Wiki</span><a href="index.html">目錄</a><a href="overview.html">總覽</a><a href="graph.html">關係圖</a><a href="log.html">操作紀錄</a><a href="../slides/index.html">教學簡報</a></header>
+<main><h1>log.md：操作紀錄（只能往下追加）</h1>
+<p>格式：<code>## [日期] 操作 | 對象</code>，後面寫做了什麼、改了哪些頁、檢查結果。</p>
+<hr />
+<h2>[2026-11-23] discuss | 確定主題與範圍（先討論）</h2>
+<ul>
+<li>使用者提出主題「情緒與行為的心理學網站」，並給了 5 篇 NOBA 模組。</li>
+<li>AI 先讀了 5 篇，評估：都是大學入門教材，授權是 CC BY-NC-SA 4.0，可以串成「情緒 → 調節 → 動機 → 學習出來的行為」這條主線。</li>
+<li>AI 提出 Wiki 結構（raw / sources / concepts / synthesis / index / log），並預先提醒：S4 的棉花糖實驗和自我耗竭，後來的重複驗證有爭議。</li>
+<li>使用者的決定：</li>
+<li>簡報主軸：<strong>情緒如何推動行為</strong></li>
+<li>觀眾：<strong>沒修過心理學的大學生</strong></li>
+<li>交付方式：放進本機資料夾，之後由使用者上傳 GitHub</li>
+</ul>
+<h2>[2026-11-23] ingest | S1 Functions of Emotions</h2>
+<ul>
+<li>新增 raw/S1、sources/s1；概念頁：emotion-functions、social-referencing、display-rules</li>
+</ul>
+<h2>[2026-11-23] ingest | S2 Emotion Experience and Well-Being</h2>
+<ul>
+<li>新增 raw/S2、sources/s2；概念頁：emotion-and-well-being、emotion-coherence、mixed-emotions</li>
+<li>交叉連結：display-rules ↔ emotion-coherence（文化要求壓抑 vs. 壓抑的代價）</li>
+</ul>
+<h2>[2026-11-23] ingest | S3 Emotional Intelligence</h2>
+<ul>
+<li>新增 raw/S3、sources/s3；概念頁：emotional-intelligence、four-branch-model、sel-and-ruler</li>
+<li>交叉連結：four-branch-model「管理情緒」↔ emotion-and-well-being「情境」</li>
+</ul>
+<h2>[2026-11-23] ingest | S4 Motives and Goals</h2>
+<ul>
+<li>新增 raw/S4、sources/s4；概念頁：goals-and-motivation、self-regulation、regulatory-focus、self-control</li>
+<li>交叉連結：self-regulation 的控制論模型 ↔ emotion-functions「情緒激勵未來行為」，這是情緒推動行為的關鍵橋樑</li>
+</ul>
+<h2>[2026-11-23] ingest | S5 Conditioning and Learning</h2>
+<ul>
+<li>新增 raw/S5、sources/s5；概念頁：classical-conditioning、operant-conditioning、extinction、habit-vs-goal-directed、observational-learning</li>
+<li>新增整合頁：synthesis/emotion-to-behavior（簡報主線）、overview</li>
+</ul>
+<h2>[2026-11-23] lint #1 | 第一次自動檢查（tools/lint_wiki.py）</h2>
+<ul>
+<li>結果：1 error、8 warnings</li>
+<li>E2 index.md 連到的 log.md 還沒建立</li>
+<li>W1 5 個來源摘要頁都是孤兒頁（concept 頁只寫來源代號，沒有連到來源頁）</li>
+<li>W3 goals-and-motivation、self-regulation、self-control 缺少「生活例子」</li>
+<li>另外發現：E6 數字檢查寫得太鬆，只比對數字、沒比對單位，所以「0%」被年份裡的 0 誤判成通過 → 改成比對「數字＋單位」</li>
+<li>改嚴格後重跑（lint #1b）：多抓到 E6 social-referencing 的「0%」找不到出處（原文是「沒有嬰兒爬過去」，是 AI 自己換算的）</li>
+</ul>
+<h2>[2026-11-23] verify | 回原文逐條核對關鍵數字（人工＋WebFetch）</h2>
+<ul>
+<li>原因：ingest 時讀的是網頁的「摘要」，不是原文全文，數字和細節可能失真</li>
+<li>核對了 10 個條目：視覺懸崖比例、Gottman 研究、MSCEIT 題數、RULER、Bandura 四個過程、味覺嫌惡例子、棉花糖、Baumeister、Balcetis &amp; Dunning</li>
+<li><strong>發現 1 個錯誤</strong>：棉花糖實驗的追蹤時間。原文是「約十年後」（孩子當時 3–5 歲），摘要卻寫成「約 15 歲」→ 修正 self-control.md，並在 raw/S4 追加更正</li>
+<li>發現 1 個細節：原文沒有把 RULER 縮寫直接拆開寫，但列出的五個技能和縮寫一致 → 保留，並在 raw/S3 註明</li>
+</ul>
+<h2>[2026-11-23] fix | 依 lint #1 和 verify 的結果修正</h2>
+<ul>
+<li>建立 log.md；所有 concept / synthesis 頁補上來源摘要頁連結；補上 3 個生活例子；social-referencing 改回原文說法；修正 self-control 的年齡</li>
+</ul>
+<h2>[2026-11-23] lint #2 | 修正後重跑</h2>
+<ul>
+<li>結果：0 errors、0 warnings</li>
+</ul>
+<h2>[2026-11-23] query | 製作教學簡報「情緒如何推動行為？」</h2>
+<ul>
+<li>依序讀 index → overview → synthesis/emotion-to-behavior → 相關 concept 頁</li>
+<li>先產生大綱（每頁標 wiki 來源頁），再生成 slides/index.html</li>
+<li>簡報檢查（tools/check_slides.py）：第一次 4 errors（另有檢查器漏頁的 bug），修正後 0 errors</li>
+</ul>
+<h2>[2026-11-23] schema | 修改 CLAUDE.md 的工作流程</h2>
+<ul>
+<li>根據這次的反思，把「回原文核對數字」和「跑 lint」從事後檢查往前移，變成 ingest 的必要步驟</li>
+</ul></main><footer>內容整理自 NOBA Textbook Series（CC BY-NC-SA 4.0）。本 Wiki 由 LLM 依 CLAUDE.md 規則生成並維護。</footer></body></html>

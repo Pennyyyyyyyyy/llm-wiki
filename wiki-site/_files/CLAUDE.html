@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLAUDE.md：「情緒與行為」LLM Wiki 的規則檔｜情緒與行為 LLM Wiki</title><style>
+:root{--paper:#FBF7F0;--ink:#1F2430;--muted:#5D6472;--line:#E6DFD3}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.75}
+header{background:var(--ink);color:#fff;padding:14px 28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+header a{color:#E3E6EC;text-decoration:none;font-size:15px}header a:hover{color:#fff}
+header .brand{font-weight:800;font-size:17px;color:#fff;margin-right:auto}
+main{max-width:860px;margin:0 auto;padding:36px 28px 80px}
+h1{font-size:32px;line-height:1.3}h2{font-size:23px;margin-top:2em;border-bottom:2px solid var(--line);padding-bottom:4px}h3{font-size:19px}
+a{color:#3546B0}table{border-collapse:collapse;width:100%;margin:1em 0;font-size:15px;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}th{background:#F3EEE5}
+code{background:#EFE9DE;padding:1px 5px;border-radius:4px;font-size:.92em}pre{background:#1F2430;color:#E8EAF0;padding:16px;border-radius:8px;overflow:auto;line-height:1.5}pre code{background:none;color:inherit}
+blockquote{margin:1em 0;padding:8px 16px;border-left:4px solid #D99011;background:#FFF7E6}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.chip{font-size:13px;padding:3px 10px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--muted)}
+.chip.type{color:#fff;border:none}
+footer{max-width:860px;margin:0 auto;padding:0 28px 40px;color:var(--muted);font-size:13px}
+</style></head><body>
+<header><span class="brand">🧠 情緒與行為 LLM Wiki</span><a href="../index.html">目錄</a><a href="../overview.html">總覽</a><a href="../graph.html">關係圖</a><a href="../log.html">操作紀錄</a><a href="../../slides/index.html">教學簡報</a></header>
+<main><h1>CLAUDE.md：「情緒與行為」LLM Wiki 的規則檔</h1>
+<p>這個檔案告訴 AI：這個 Wiki 長什麼樣子、要遵守什麼規則，以及 ingest、query、lint 三種工作要照什麼步驟做。
+做法參考 Andrej Karpathy 的 LLM Wiki 模式：知識只整理一次，之後持續維護，而不是每次提問都從原始文件重新找答案。</p>
+<h2>1. 主題與範圍</h2>
+<ul>
+<li><strong>主題</strong>：情緒與行為的心理學（Emotion &amp; Behavior）</li>
+<li><strong>核心問題</strong>：情緒怎麼產生功能、怎麼影響幸福感、能不能被管理，又怎麼透過動機和學習變成行為？</li>
+<li><strong>讀者</strong>：沒修過心理學的大學生</li>
+<li><strong>語言</strong>：繁體中文為主，專有名詞第一次出現時附英文，例如「社會參照（social referencing）」</li>
+<li><strong>範圍外</strong>：臨床診斷、治療建議。Wiki 是教學用的，不是醫療資訊</li>
+</ul>
+<h2>2. 資料夾結構</h2>
+<pre><code>raw/              原始資料的 ingest 筆記（出處、授權、重點摘錄）。只能新增，不能改寫
+wiki/
+  index.md        全部頁面的目錄（每次 ingest 後都要更新）
+  log.md          操作紀錄（ingest / query / lint，只能往下追加）
+  overview.md     全主題的總覽
+  sources/        每篇來源一頁摘要
+  concepts/       概念頁（一個概念一頁）
+  synthesis/      跨來源的整合、比較、爭議頁
+slides/           從 Wiki 產生的教學簡報（HTML）
+wiki-site/        Wiki 的網頁版（tools/build_wiki_site.py 產生）
+tools/            檢查腳本（lint_wiki.py、check_slides.py）
+</code></pre>
+<h2>3. 頁面格式（每一頁都要有）</h2>
+<pre><code class="language-markdown">---
+title: 頁面標題
+type: source | concept | synthesis
+sources: [S1, S3]        # 這頁的內容來自哪幾篇來源（見下方代號）
+related: [other-page]    # 相關頁面的檔名（不含 .md）
+---
+# 標題
+（內容）
+## 來源
+- [S1] ...
+</code></pre>
+<p><strong>來源代號：</strong></p>
+<table>
+<thead>
+<tr>
+<th>代號</th>
+<th>來源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td>Hwang &amp; Matsumoto, <em>Functions of Emotions</em>（NOBA）</td>
+</tr>
+<tr>
+<td>S2</td>
+<td>Ford &amp; Mauss, <em>Emotion Experience and Well-Being</em>（NOBA）</td>
+</tr>
+<tr>
+<td>S3</td>
+<td>Brackett, Delaney &amp; Salovey, <em>Emotional Intelligence</em>（NOBA）</td>
+</tr>
+<tr>
+<td>S4</td>
+<td>Fishbach &amp; Touré-Tillery, <em>Motives and Goals</em>（NOBA）</td>
+</tr>
+<tr>
+<td>S5</td>
+<td>Bouton, <em>Conditioning and Learning</em>（NOBA）</td>
+</tr>
+<tr>
+<td>C1</td>
+<td>Hagger et al. (2016)：自我耗竭的多實驗室重複驗證（只用來補充爭議）</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>Watts, Duncan &amp; Quan (2018)：棉花糖實驗的概念重複驗證（只用來補充爭議）</td>
+</tr>
+</tbody>
+</table>
+<h2>4. 寫作規則</h2>
+<ol>
+<li><strong>每一個事實主張都要能追溯到來源代號</strong>。沒有來源的句子不能寫進 concept 或 source 頁。</li>
+<li><strong>數字、實驗結果、人名年份</strong>這類容易出錯的細節，要在 <code>raw/</code> 找得到對應的條目。</li>
+<li>連結一律用相對路徑的 Markdown 連結，例如 <code>[社會參照](social-referencing.md)</code>，GitHub 和 Obsidian 都能直接點。</li>
+<li>每個 concept 頁至少要連到 1 個其他 concept 頁，也至少要有 1 頁連到它（不能有孤兒頁）。</li>
+<li>用白話解釋，每個概念頁都要有「生活例子」一段。</li>
+<li>遇到後來有爭議的研究，要在頁面標 ⚠️，並連到 <a href="../synthesis/caveats-and-debates.html">爭議與限制</a>。</li>
+</ol>
+<h2>5. 三種工作流程</h2>
+<h3>Ingest（加入新資料）：先討論、後生成</h3>
+<ol>
+<li>讀完來源，<strong>先跟使用者討論</strong>：這篇的重點是什麼、跟現有頁面有什麼關係、要新增或修改哪些頁面</li>
+<li>使用者同意後才生成：在 <code>raw/</code> 建 ingest 筆記，每一條重點都要編號（R1-1、R1-2…）</li>
+<li><strong>🆕 回原文核對（v2 新增）</strong>：筆記裡的數字、比例、年齡、人名年份、實驗流程，都要回<strong>原文</strong>逐條核對（不能只看網頁摘要），核對結果寫進 raw 筆記的「回原文核對」段落</li>
+<li>到 <code>wiki/sources/</code> 建摘要頁，新增或更新相關的 concept 頁，加上交叉連結；concept 頁的「來源」段落要連回來源摘要頁</li>
+<li>更新 <code>index.md</code>，在 <code>log.md</code> 追加一筆紀錄</li>
+<li><strong>🆕 每篇 ingest 完都要跑 <code>python3 tools/lint_wiki.py</code>（v2 新增）</strong>，0 error 才能 ingest 下一篇；不能 5 篇都做完才一次檢查</li>
+</ol>
+<h3>Query（從 Wiki 回答問題或製作簡報）</h3>
+<ol>
+<li>先讀 <code>index.md</code>，找出相關頁面</li>
+<li><strong>只用 Wiki 頁面的內容</strong>回答；Wiki 裡沒有的內容，要明確說「Wiki 未涵蓋」</li>
+<li>有價值的回答（例如新的整合觀點）存回 <code>wiki/synthesis/</code>，讓知識累積</li>
+</ol>
+<h3>Lint（健康檢查）</h3>
+<ul>
+<li>斷掉的連結、孤兒頁、缺少 frontmatter 或來源代號的頁面 → 用 <code>tools/lint_wiki.py</code> 自動檢查</li>
+<li>頁面之間互相矛盾、說法過時、該加 ⚠️ 卻沒加 → 由 AI 人工檢查，結果記在 <code>log.md</code></li>
+</ul></main><footer>內容整理自 NOBA Textbook Series（CC BY-NC-SA 4.0）。本 Wiki 由 LLM 依 CLAUDE.md 規則生成並維護。</footer></body></html>
